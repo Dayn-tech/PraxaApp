@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class ChatModel(ChatOpenAI):
+def get_model(...):
+    return ChatOpenAI(...)
+    
     """
     Creates a chat model from openrouter.ai using the OpenAI API
     """
@@ -18,7 +20,7 @@ class ChatModel(ChatOpenAI):
         openai_api_key = openai_api_key or os.getenv('OPENROUTER_API_KEY')
         super().__init__(
             openai_api_base=openai_api_base,
-            openai_api_key=openai_api_key,
+            api_key=openai_api_key,
             model=model_name,
             **kwargs
         )
@@ -39,36 +41,28 @@ def get_model(model_name: str = "meta-llama/llama-3.1-8b-instruct:free") -> Chat
     )
 
 if __name__ == "__main__":
-     model = get_model()
-     from langchain_core.messages import HumanMessage
-     from langchain.prompts import ChatPromptTemplate
+    from langchain_core.messages import HumanMessage, SystemMessage
 
-     HumanMessage
-     HumanMessage
-     HumanMessage
-     HumanMessage
+    model = get_model()
 
-     response = model.invoke(
-         [HumanMessage("You are a helpful assistant."),
-          HumanMessage("What are some plays by Tawfiq al-Hakim?")])
-     print(response.content)
-     print("----------")
-     response = model.invoke(
-         [HumanMessage("You are a helpful assistant."),
-          HumanMessage("What is Ryan Calais Camerons's most recent play?")])
-     print(response.content)
-     print("----------")
-     response = model.invoke(
-         [HumanMessage("You are a helpful assistant."),
-          HumanMessage("What Broadway shows have more than 10,000 performances?")])
-     print(response.content)
+    response = model.invoke([
+        SystemMessage(content="You are a helpful assistant."),
+        HumanMessage(content="What are some plays by Tawfiq al-Hakim?")
+    ])
+    print(response.content)
+    print("----------")
 
-     print(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
-     response = model.invoke(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
-     print(response.content)
+    response = model.invoke([
+        SystemMessage(content="You are a helpful assistant."),
+        HumanMessage(content="What is Ryan Calais Cameron's most recent play?")
+    ])
+    print(response.content)
+    print("----------")
 
-     chain = HumanMessage
-     response = HumanMessage{"playwright": "Ryan Calais Cameron"})
-     print(response.content)
+    response = model.invoke([
+        SystemMessage(content="You are a helpful assistant."),
+        HumanMessage(content="What Broadway shows have more than 10,000 performances?")
+    ])
+    print(response.content)
 
-    pass
+  
