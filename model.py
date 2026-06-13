@@ -40,28 +40,28 @@ def get_model(model_name: str = "<google/gemma-3-27b-it:free>") -> ChatModel:
 if __name__ == "__main__":
 # when run as a script, run some tests to demonstrate capabilities
 #    model = get_model()
-#    from langchain_core.messages import HumanMessage
-#    from langchain.prompts import ChatPromptTemplate
+     from langchain_core.messages import HumanMessage
+     from langchain.prompts import ChatPromptTemplate
 
 #    ???
 #    ???
 #    ???
 #    ???
 
-#    response = model.invoke(
-#        [???("You are a helpful assistant."),
-#         ???("What are some plays by Tawfiq al-Hakim?")])
-#    print(response.content)
-#    print("----------")
-#    response = model.invoke(
-#        [???("You are a helpful assistant."),
-#         ???("What is Ryan Calais Camerons's most recent play?")])
-#    print(response.content)
-#    print("----------")
-#    response = model.invoke(
-#        [???("You are a helpful assistant."),
-#         ???("What Broadway shows have more than 10,000 performances?")])
-#    print(response.content)
+     response = model.invoke(
+         [???("You are a helpful assistant."),
+          ???("What are some plays by Tawfiq al-Hakim?")])
+     print(response.content)
+     print("----------")
+     response = model.invoke(
+         [???("You are a helpful assistant."),
+          ???("What is Ryan Calais Camerons's most recent play?")])
+     print(response.content)
+     print("----------")
+     response = model.invoke(
+         [???("You are a helpful assistant."),
+          ???("What Broadway shows have more than 10,000 performances?")])
+     print(response.content)
 
 #    print(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
 #    response = model.invoke(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
