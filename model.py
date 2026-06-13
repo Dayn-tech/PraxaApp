@@ -1,6 +1,9 @@
 from langchain_community.chat_models import ChatOpenAI
 from typing import Optional, Any
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 os.environ["OPENROUTER_API_KEY"] = "<>"
 
