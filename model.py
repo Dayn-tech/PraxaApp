@@ -43,32 +43,32 @@ if __name__ == "__main__":
      from langchain_core.messages import HumanMessage
      from langchain.prompts import ChatPromptTemplate
 
-#    ???
-#    ???
-#    ???
-#    ???
+     HumanMessage
+     HumanMessage
+     HumanMessage
+     HumanMessage
 
      response = model.invoke(
-         [???("You are a helpful assistant."),
-          ???("What are some plays by Tawfiq al-Hakim?")])
+         [HumanMessage("You are a helpful assistant."),
+          HumanMessage("What are some plays by Tawfiq al-Hakim?")])
      print(response.content)
      print("----------")
      response = model.invoke(
-         [???("You are a helpful assistant."),
-          ???("What is Ryan Calais Camerons's most recent play?")])
+         [HumanMessage("You are a helpful assistant."),
+          HumanMessage("What is Ryan Calais Camerons's most recent play?")])
      print(response.content)
      print("----------")
      response = model.invoke(
-         [???("You are a helpful assistant."),
-          ???("What Broadway shows have more than 10,000 performances?")])
+         [HumanMessage("You are a helpful assistant."),
+          HumanMessage("What Broadway shows have more than 10,000 performances?")])
      print(response.content)
 
-#    print(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
-#    response = model.invoke(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
-#    print(response.content)
+     print(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
+     response = model.invoke(prompt_template.invoke({"playwright": "Ryan Calais Cameron"}))
+     print(response.content)
 
-#    chain = ???
-#    response = ???{"playwright": "Ryan Calais Cameron"})
-#    print(response.content)
+     chain = HumanMessage
+     response = HumanMessage{"playwright": "Ryan Calais Cameron"})
+     print(response.content)
 
     pass
