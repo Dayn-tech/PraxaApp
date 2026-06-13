@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+api_key = os.getenv(#OPENROUTER_API_KEY")
+
 os.environ["OPENROUTER_API_KEY"] = "<>"
 
 class ChatModel(ChatOpenAI):
