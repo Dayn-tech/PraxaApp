@@ -1,11 +1,9 @@
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from typing import Optional, Any
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-api_key = os.getenv(#OPENROUTER_API_KEY")
 
 class ChatModel(ChatOpenAI):
     """
@@ -21,11 +19,11 @@ class ChatModel(ChatOpenAI):
         super().__init__(
             openai_api_base=openai_api_base,
             openai_api_key=openai_api_key,
-            model_name=model_name,
+            model=model_name,
             **kwargs
         )
 
-def get_model(model_name: str = "<meta-llama/llama-3.1-8b-instruct:free>") -> ChatModel:
+def get_model(model_name: str = "meta-llama/llama-3.1-8b-instruct:free") -> ChatModel:
     """
     Gets a reference to a model
     
@@ -41,8 +39,7 @@ def get_model(model_name: str = "<meta-llama/llama-3.1-8b-instruct:free>") -> Ch
     )
 
 if __name__ == "__main__":
-# when run as a script, run some tests to demonstrate capabilities
-#    model = get_model()
+     model = get_model()
      from langchain_core.messages import HumanMessage
      from langchain.prompts import ChatPromptTemplate
 
