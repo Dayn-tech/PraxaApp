@@ -7,8 +7,6 @@ load_dotenv()
 
 api_key = os.getenv(#OPENROUTER_API_KEY")
 
-os.environ["OPENROUTER_API_KEY"] = "<>"
-
 class ChatModel(ChatOpenAI):
     """
     Creates a chat model from openrouter.ai using the OpenAI API
