@@ -31,8 +31,8 @@ def make_context_string(dict_with_docs: dict[str, Document]) -> str:
 
 #context = ???(???=???)
 model = get_model()
-#answer_chain = context | prompt_template | model
-#chain_with_sources = ???.assign(???)
+answer_chain = context | prompt_template | model
+chain_with_sources = question_and_docs.assign(answer=answer_chain)
 
 def answer_and_sources(question: str) -> dict[str, str]:
     """
