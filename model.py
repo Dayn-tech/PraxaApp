@@ -1,13 +1,13 @@
 from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from typing import Optional, Any
 import os
-from dotenv import context, model
+from dotenv import load_dotenv
 
 load_dotenv()
 
-def get_model(...):
-    return ChatOpenAI(...)
-    
+
+class ChatModel(ChatOpenAI):
     """
     Creates a chat model from openrouter.ai using the OpenAI API
     """
@@ -15,15 +15,16 @@ def get_model(...):
             self,
             model_name: str,
             openai_api_key: Optional[str] = None,
-            openai_api_base: str="https://openrouter.ai/api/v1",
+            openai_api_base: str = "https://openrouter.ai/api/v1",
             **kwargs: Any):
         openai_api_key = openai_api_key or os.getenv('OPENROUTER_API_KEY')
         super().__init__(
             openai_api_base=openai_api_base,
-            api_key=openai_api_key,
+            openai_api_key=openai_api_key,
             model=model_name,
             **kwargs
         )
+
 
 def get_model(model_name: str = "meta-llama/llama-3.1-8b-instruct:free") -> ChatModel:
     """
@@ -39,6 +40,7 @@ def get_model(model_name: str = "meta-llama/llama-3.1-8b-instruct:free") -> Chat
         max_tokens=512,
         temperature=0
     )
+
 
 if __name__ == "__main__":
     from langchain_core.messages import HumanMessage, SystemMessage
