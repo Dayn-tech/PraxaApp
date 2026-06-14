@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from typing import Optional, Any
 import os
-from dotenv import load_dotenv
+from dotenv import context, model
 
 load_dotenv()
 
