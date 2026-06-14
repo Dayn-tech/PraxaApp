@@ -30,7 +30,7 @@ def make_context_string(dict_with_docs: dict[str, Document]) -> str:
     return "\n\n".join(doc.page_content for doc in dict_with_docs["context_docs"])
 
 #context = ???(???=???)
-model = model.get_model()
+model = get_model()
 #answer_chain = context | prompt_template | model
 #chain_with_sources = ???.assign(???)
 
