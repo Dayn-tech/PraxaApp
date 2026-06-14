@@ -67,10 +67,10 @@ if __name__ == "__main__":
 #    print(type(add_length))
 #    print(add_length.invoke(my_dict))
 
-#    complete_prompt_chain = question_and_docs | context | prompt_template
-#    result = complete_prompt_chain.invoke("What is Ryan Calais Cameron's most recent play?")
-#    print(type(result))
-#    print(result)
+complete_prompt_chain = question_and_docs | context | prompt_template
+result = complete_prompt_chain.invoke("What is Ryan Calais Cameron's most recent play?")
+print(type(result))
+print(result)
 
 #    chain = ??? | ??? | ??? | ???
 #    result = chain.invoke("What is Ryan Calais Cameron's most recent play?")
