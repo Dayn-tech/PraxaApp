@@ -4,10 +4,10 @@ from langchain_core.documents import Document
 from context import get_vector_store
 from model import get_model
 
-#prompt_template = ???([
-#    (???, "You are an assistant providing answers to questions about the theater. In addition to your training data, use the additional context provided below to provide up-to-date information."),
-#    (???, "Question: ???\nContext: ???\nAnswer:")
-#])
+prompt_template = ChatPromptTemplate([
+    ("human", "You are an assistant providing answers to questions about the theater. In addition to your training data, you are to use the additional context provided below to provide up-to-date information."),
+    ("human", "Question: {question}\nContext: {context}")
+])
 
 #retriever = ???.as_retriever()
 
