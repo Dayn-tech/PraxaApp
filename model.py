@@ -1,70 +1,80 @@
-from langchain_openai import ChatOpenAI
-from langchain_core.language_models import BaseChatModel
-from typing import Optional, Any
-import os
-from dotenv import load_dotenv
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable import RunnablePassthrough, RunnableParallel
+from langchain_core.documents import Document
+from context import get_context
 
-load_dotenv()
+# Prompt template as shown in the image
+prompt_template = ChatPromptTemplate([
+    ("human", "You are an assistant providing answers to questions about the theater. In addition to your training data, you are to use the additional context provided below to provide up-to-date information."),
+    ("human", "Question: {question}\nContext: {context}")
+])
 
+retriever = get_context().as_retriever()
 
-class ChatModel(ChatOpenAI):
+question_and_docs = RunnableParallel(
+    { "question": RunnablePassthrough(),
+      "context_docs": retriever }
+)
+
+def make_context_string(dict_with_docs: dict[str, Document]) -> str:
     """
-    Creates a chat model from openrouter.ai using the OpenAI API
+    Takes the contents of each Document object in a dictionary and joins them
+    in one string, separated by two newlines
+    :param dict_with_docs: The dictionary with the context docs under the key
+    "context_docs"
+    :type dict_with_docs: dict[str, Document]
+    :returns: The combined string
+    :rtype: str
     """
-    def __init__(
-            self,
-            model_name: str,
-            openai_api_key: Optional[str] = None,
-            openai_api_base: str = "https://openrouter.ai/api/v1",
-            **kwargs: Any):
-        openai_api_key = openai_api_key or os.getenv('OPENROUTER_API_KEY')
-        super().__init__(
-            openai_api_base=openai_api_base,
-            openai_api_key=openai_api_key,
-            model=model_name,
-            **kwargs
-        )
+    return "\n\n".join(doc.page_content for doc in dict_with_docs["context_docs"])
 
+context = RunnablePassthrough.assign(context=make_context_string)
 
-def get_model(model_name: str = "meta-llama/llama-3.1-8b-instruct:free") -> ChatModel:
+model = model.get_model()
+
+answer_chain = context | prompt_template | model
+
+chain_with_sources = question_and_docs | context | prompt_template | model
+
+def answer_and_sources(question: str) -> dict[str, str]:
     """
-    Gets a reference to a model
-    
-    :param model_name: Name of the model
-    :type model_name: str
-    :return: the model
-    :rtype: ChatModel
+    Invokes the model with the given question.
+    :param question: The question to ask.
+    :returns: Dictionary with the answer and supporting sources
     """
-    return ChatModel(
-        model_name=model_name,
-        max_tokens=512,
-        temperature=0
-    )
-
+    result = chain_with_sources.invoke(question)
+    response_text = result["answer"].content
+    sources = "\n\n".join(f"{doc.metadata['source']}, page {doc.metadata['page']}" for doc in result["context_docs"])
+    return {"answer": response_text,
+            "sources": sources}
 
 if __name__ == "__main__":
-    from langchain_core.messages import HumanMessage, SystemMessage
-
-    model = get_model()
-
-    response = model.invoke([
-        SystemMessage(content="You are a helpful assistant."),
-        HumanMessage(content="What are some plays by Tawfiq al-Hakim?")
-    ])
-    print(response.content)
-    print("----------")
-
-    response = model.invoke([
-        SystemMessage(content="You are a helpful assistant."),
-        HumanMessage(content="What is Ryan Calais Cameron's most recent play?")
-    ])
-    print(response.content)
-    print("----------")
-
-    response = model.invoke([
-        SystemMessage(content="You are a helpful assistant."),
-        HumanMessage(content="What Broadway shows have more than 10,000 performances?")
-    ])
-    print(response.content)
-
-  
+    # when run as a script, run some tests to demonstrate capabilities
+    # docs = retriever.invoke("What is Ryan Calais Cameron's most recent play?")
+    # print(f"Found {len(docs)} documents:")
+    # for doc in docs:
+    #     print("-----")
+    #     print(doc)
+    # print(question_and_docs.invoke("What is Ryan Calais Cameron's most recent play?"))
+    # my_dict = {
+    #     "question": "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
+    #     "answer": "All the wood that a woodchuck could chuck if a woodchuck could chuck wood."
+    # }
+    # add_length = RunnablePassthrough.assign(length=len)
+    # print(type(add_length))
+    # print(add_length.invoke(my_dict))
+    # complete_prompt_chain = question_and_docs | context | prompt_template
+    # result = complete_prompt_chain.invoke("What is Ryan Calais Cameron's most recent play?")
+    # print(type(result))
+    # print(result)
+    # chain = ??? | ??? | ??? | ???
+    # result = chain.invoke("What is Ryan Calais Cameron's most recent play?")
+    # print(result.content)
+    # result = chain_with_sources.invoke("What Broadway shows have had more than 10,000 performances?")
+    # print("The docs used in this answer:")
+    # print("\n".join(doc.metadata.__repr__() for doc in result["context_docs"]))
+    # print("-----")
+    # print("The answer:")
+    # print(result["answer"].content)
+    # print(answer_and_sources("What is Ryan Calais Cameron's most recent play?"))
+    pass
