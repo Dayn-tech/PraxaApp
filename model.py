@@ -4,13 +4,13 @@ from langchain_core.documents import Document
 from context import get_vector_store
 from model import get_model
 
-# Prompt template as shown in the image
+# Prompt template
 prompt_template = ChatPromptTemplate([
     ("human", "You are an assistant providing answers to questions about the theater. In addition to your training data, you are to use the additional context provided below to provide up-to-date information."),
     ("human", "Question: {question}\nContext: {context}")
 ])
 
-# Corrected: Get the vector store first, then create the retriever
+# Get the vector store and create retriever
 retriever = get_vector_store().as_retriever()
 
 question_and_docs = RunnableParallel(
@@ -22,6 +22,11 @@ def make_context_string(dict_with_docs: dict[str, Document]) -> str:
     """
     Takes the contents of each Document object in a dictionary and joins them
     in one string, separated by two newlines
+    :param dict_with_docs: The dictionary with the context docs under the key
+    "context_docs"
+    :type dict_with_docs: dict[str, Document]
+    :returns: The combined string
+    :rtype: str
     """
     return "\n\n".join(doc.page_content for doc in dict_with_docs["context_docs"])
 
@@ -46,5 +51,55 @@ def answer_and_sources(question: str) -> dict[str, str]:
             "sources": sources}
 
 if __name__ == "__main__":
-    # Test code can go here
-    pass
+    # Test the retriever
+    docs = retriever.invoke("What is Ryan Calais Cameron's most recent play?")
+    print(f"Found {len(docs)} documents:")
+    for doc in docs:
+        print("-----")
+        print(doc)
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test question_and_docs
+    print(question_and_docs.invoke("What is Ryan Calais Cameron's most recent play?"))
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test RunnablePassthrough.assign
+    my_dict = {
+        "question": "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
+        "answer": "All the wood that a woodchuck could chuck if a woodchuck could chuck wood."
+    }
+    add_length = RunnablePassthrough.assign(length=len)
+    print(f"Type of add_length: {type(add_length)}")
+    print(add_length.invoke(my_dict))
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test the complete prompt chain
+    complete_prompt_chain = question_and_docs | context | prompt_template
+    result = complete_prompt_chain.invoke("What is Ryan Calais Cameron's most recent play?")
+    print(f"Type of result: {type(result)}")
+    print(result)
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test the full chain
+    chain = question_and_docs | context | prompt_template | model
+    result = chain.invoke("What is Ryan Calais Cameron's most recent play?")
+    print(result.content)
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test chain_with_sources
+    result = chain_with_sources.invoke("What Broadway shows have had more than 10,000 performances?")
+    print("The docs used in this answer:")
+    print("\n".join(doc.metadata.__repr__() for doc in result["context_docs"]))
+    print("-----")
+    print("The answer:")
+    print(result["answer"].content)
+    
+    print("\n" + "="*50 + "\n")
+    
+    # Test answer_and_sources function
+    print(answer_and_sources("What is Ryan Calais Cameron's most recent play?"))
